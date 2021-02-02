@@ -2,13 +2,7 @@
 
 set -euxo pipefail
 
-BUILD_IMAGE_NAME="video-to-audio-editor"
-version=$(TZ=Australia/Melbourne date +'%Y%m%d-%H%M%S')
-BUILD_IMAGE_FULL_NAME=${BUILD_IMAGE_NAME}:${version}
-
-docker build \
-  --tag "$BUILD_IMAGE_FULL_NAME" \
-  --file docker/Dockerfile.run \
-  .
-docker run "$BUILD_IMAGE_FULL_NAME"
+docker-compose --file ./docker/docker-compose.yml build production_editor
+docker-compose --file ./docker/docker-compose.yml down
+docker-compose --file ./docker/docker-compose.yml up production_editor
 

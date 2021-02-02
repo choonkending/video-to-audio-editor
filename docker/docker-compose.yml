@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  production_editor:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+
