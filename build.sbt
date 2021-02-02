@@ -3,7 +3,7 @@ name := "video-and-audio-editor"
 scalaVersion := "2.13.4"
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.2.2"
+  "org.specs2" %% "specs2-core" % "4.10.0" % Test
 )
 
 scalacOptions ++= Seq(
