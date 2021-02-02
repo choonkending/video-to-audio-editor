@@ -15,4 +15,4 @@ scalacOptions ++= Seq(
   "-Xlint",
   "-language:higherKinds")
 
-mainClass in Compile := Some("example.Main")
+mainClass in Compile := Some("editor.Main")
