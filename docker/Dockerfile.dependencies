@@ -1,5 +1,9 @@
 FROM openjdk:11-buster AS dependencies
 
+# Install ffmpeg
+RUN apt-get update && apt-get install --yes --no-install-recommends ffmpeg \
+  && rm -rf /var/lib/apt/lists/*
+
 # useradd is a command to create a new user account in unix. -m creates a home directory, e.g. /home/username
 RUN useradd -m build
 # Sets the user name (or UID) to use when running the image and for any RUN, CMD and ENTRYPOINT instructions that follow it in the Dockerfile
