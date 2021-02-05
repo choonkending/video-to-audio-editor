@@ -9,7 +9,9 @@ lazy val root = project
     scalaVersion := scala3Version,
 
     libraryDependencies ++= Seq(
-      ("org.specs2" %% "specs2-core" % "4.10.0" % Test).withDottyCompat(scala3Version)
+      ("org.specs2" %% "specs2-core" % "4.10.0" % Test).withDottyCompat(scala3Version),
+      "org.typelevel" %% "cats-core" % "2.3.1",
+      "org.typelevel" %% "cats-effect" % "2.3.1"
     ),
   )
 
