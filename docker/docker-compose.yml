@@ -7,4 +7,4 @@ services:
 
   unit_tests:
     <<: *base
-    command: ./sbt clean test
+    command: sbt clean test

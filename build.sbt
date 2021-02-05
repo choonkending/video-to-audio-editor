@@ -1,18 +1,16 @@
-name := "video-and-audio-editor"
+val scala3Version = "3.0.0-M3"
 
-scalaVersion := "2.13.4"
+lazy val root = project
+  .in(file("."))
+  .settings(
+    name := "video-and-audio-editor",
+    version := "0.1.0",
 
-libraryDependencies ++= Seq(
-  "org.specs2" %% "specs2-core" % "4.10.0" % Test
-)
+    scalaVersion := scala3Version,
 
-scalacOptions ++= Seq(
-  "-Xfatal-warnings",
-  "-Ywarn-unused:imports",
-  "-deprecation",
-  "-unchecked",
-  "-feature",
-  "-Xlint",
-  "-language:higherKinds")
+    libraryDependencies ++= Seq(
+      ("org.specs2" %% "specs2-core" % "4.10.0" % Test).withDottyCompat(scala3Version)
+    ),
+  )
 
-mainClass in Compile := Some("editor.Main")
+

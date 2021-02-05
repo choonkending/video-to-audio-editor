@@ -1,7 +1,10 @@
 FROM openjdk:11-buster AS dependencies
 
-# Install ffmpeg
-RUN apt-get update && apt-get install --yes --no-install-recommends ffmpeg \
+# Install dependencies
+# Install sbt
+RUN echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
+RUN curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | apt-key add
+RUN apt-get update && apt-get install --yes --no-install-recommends ffmpeg sbt \
   && rm -rf /var/lib/apt/lists/*
 
 # useradd is a command to create a new user account in unix. -m creates a home directory, e.g. /home/username
@@ -12,7 +15,7 @@ RUN mkdir /home/build/app
 WORKDIR /home/build/app
 
 # COPY --chown=<user>:<group> <hostPath> <containerPath>
-COPY --chown=build:build sbt build.sbt ./
-COPY --chown=build:build project/build.properties project/
+COPY --chown=build:build build.sbt ./
+COPY --chown=build:build project/build.properties project/plugins.sbt project/
 
-RUN ./sbt compile
+RUN sbt compile
