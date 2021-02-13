@@ -17,8 +17,8 @@ object Main {
         println("\nWonderful, we have our required environment variables available 🎉\n")
         val converterService = new ConverterService(config, FFMPEG.run)
         converterService.convert().unsafeRunSync() match {
-          case FFMPEGExecutionSuccess => println("Failed to run the converter service")
-          case FFMPEGExecutionFailure => println("Successfully ran the converter service")
+          case FFMPEGExecutionSuccess => println("Successfully ran the converter service")
+          case FFMPEGExecutionFailure => println("Failed to run the converter service")
         }
   }
 }
