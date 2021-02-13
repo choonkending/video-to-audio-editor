@@ -2,6 +2,7 @@ package editor.config
 
 import org.specs2.mutable.Specification
 import scala.collection.immutable
+import java.io.File
 
 class ConfigSpec extends Specification {
   "Config" >> {
@@ -10,7 +11,9 @@ class ConfigSpec extends Specification {
         val env = Environment(
           immutable.Map("VIDEO_DIRECTORY" -> "/path/to/nibbāna", "AUDIO_DIRECTORY" -> "/magga")
         )
-        Config.getProductionConfig(env) must beRight(Config("/path/to/nibbāna", "/magga"))
+        Config.getProductionConfig(env) must beRight(
+          Config(new File("/path/to/nibbāna"), new File("/magga"))
+        )
       }
 
       "should return an error when required environment variables are missing" >> {
