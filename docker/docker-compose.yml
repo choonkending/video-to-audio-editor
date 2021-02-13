@@ -11,3 +11,9 @@ services:
   unit_tests:
     <<: *base
     command: sbt clean test
+
+  dev:
+    <<: *base
+    stdin_open: true
+    tty: true
+    command: /bin/bash
