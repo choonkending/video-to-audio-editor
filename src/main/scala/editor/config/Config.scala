@@ -17,7 +17,7 @@ object Config {
 
     maybeConfig match
       case Invalid(errors) =>
-        val errorMessage = errors.toList.map(_.message).mkString("\nConfiguration Errors:\n", "\n", "\n")
+        val errorMessage = errors.toList.map(_.errorMessage).mkString("\nConfiguration Errors:\n", "\n", "\n")
         Left(new IllegalStateException(errorMessage))
       case Valid(c) => Right(c)
   }
