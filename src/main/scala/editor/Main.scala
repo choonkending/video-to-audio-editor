@@ -10,9 +10,8 @@ object Main {
     val env = Environment(sys.env)
 
     Config.getProductionConfig(env) match
-      case Left(e: Throwable) =>
-        System.err.println(s"Failed to start editor: ${e.getMessage}")
-        throw e
+      case Left(e) =>
+        System.err.println(s"Failed to start editor: ${e.errorMessage}")
       case Right(config) =>
         println("\nWonderful, we have our required environment variables available 🎉\n")
         val converterService = new ConverterService(config, FFMPEG.run)

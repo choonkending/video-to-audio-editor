@@ -3,6 +3,7 @@ package editor.config
 import org.specs2.mutable.Specification
 import scala.collection.immutable
 import java.io.File
+import editor.AppError
 
 class ConfigSpec extends Specification {
   "Config" >> {
@@ -18,7 +19,7 @@ class ConfigSpec extends Specification {
 
       "should return an error when required environment variables are missing" >> {
         val env = Environment(immutable.Map.empty)
-        Config.getProductionConfig(env) must beLeft[Throwable]
+        Config.getProductionConfig(env) must beLeft[AppError]
       }
     }
   }
