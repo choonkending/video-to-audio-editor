@@ -11,7 +11,7 @@ class ConverterService(
   executeFFMPEGCommand: FFMPEGCommand => IO[FFMPEGExecutionResult]
 ) {
   def convert(): IO[FFMPEGExecutionResult] = {
-    val command = FFMPEGCommand(NonEmptyVector.of("-i input"), "output", Vector())
+    val command = FFMPEGCommand.videoToAudio("example.mp4", "example.mp3")
     executeFFMPEGCommand(command)
   }
 }
