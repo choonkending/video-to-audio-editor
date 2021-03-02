@@ -9,12 +9,10 @@ case class Config(videoDirectory: File, audioDirectory: File)
 
 object Config {
   def getProductionConfig(env: Environment): Either[AppError, Config] = {
-    val videoDirectory = env.required("VIDEO_DIRECTORY").toValidatedNec
-    val audioDirectory = env.required("AUDIO_DIRECTORY").toValidatedNec
+    val videoDirectory = env.required("VIDEO_DIRECTORY").map(new File(_)).toValidatedNec
+    val audioDirectory = env.required("AUDIO_DIRECTORY").map(new File(_)).toValidatedNec
 
-    val maybeConfig = (videoDirectory, audioDirectory).mapN(
-      (v, a) => Config(new File(v), new File(a))
-    )
+    val maybeConfig = (videoDirectory, audioDirectory).mapN(Config.apply)
 
     maybeConfig match
       case Invalid(errors) => Left(ConfigError(errors))
