@@ -7,9 +7,10 @@ object FFMPEG {
   def run(command: FFMPEGCommand): IO[FFMPEGExecutionResult] = {
     IO(
       Process(FFMPEGCommand.toScalaProcessCommand(command)).lazyLines.map(l => println(l))
-    ).map(
-      _ => FFMPEGExecutionSuccess
-    )
+    ).attempt.map {
+      case Left(e) => FFMPEGExecutionFailure
+      case Right(_) => FFMPEGExecutionSuccess
+    }
   }
 }
 
