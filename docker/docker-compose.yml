@@ -5,8 +5,8 @@ services:
       context: ..
       dockerfile: ./docker/Dockerfile
     environment:
-      VIDEO_DIRECTORY: "/Users/ken/Downloads/convert/mp4"
-      AUDIO_DIRECTORY: "/Users/ken/Downloads/convert/mp3"
+      VIDEO_DIRECTORY: ${HOME}/dev/video-to-audio-editor/data/mp4
+      AUDIO_DIRECTORY: ${HOME}/dev/video-to-audio-editor/data/mp3
 
   unit_tests:
     <<: *base
