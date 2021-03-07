@@ -1,6 +1,8 @@
 target/
 
 # vim
+.bsp/
+.idea/
 .metals/
 .bloop/
 metals.sbt
