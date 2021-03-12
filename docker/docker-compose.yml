@@ -5,8 +5,8 @@ services:
       context: ..
       dockerfile: ./docker/Dockerfile
     environment:
-      VIDEO_DIRECTORY: ./data/mp4
-      AUDIO_DIRECTORY: ./data/mp3
+      VIDEO_DIRECTORY: data/mp4
+      AUDIO_DIRECTORY: data/mp3
     volumes:
       - ${HOME}/dev/video-to-audio-editor/data:/home/build/app/data
 
