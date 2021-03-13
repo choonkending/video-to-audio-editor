@@ -16,9 +16,18 @@ object Main extends IOApp {
       case Right(config) =>
         println("\nWonderful, we have our required environment variables available 🎉\n")
         val converterService = new ConverterService(config, FFMPEG.run)
-        converterService.convert().flatMap {
-          case FFMPEGExecutionSuccess => IO(println("Successfully ran the converter service")).as(ExitCode.Success)
-          case FFMPEGExecutionFailure => IO(println("Failed to run the converter service")).as(ExitCode.Error)
+        converterService
+          .convert()
+          .attempt
+          .flatMap {
+            case Left(error) =>
+              IO(
+                System.err.println("🥺 Something went wrong \n Please double check if you have created the data/mp4 and data/mp3 directories 🙏")
+              )
+                .flatMap(
+                  _ => IO(error.printStackTrace())
+                ).as(ExitCode.Error)
+            case Right(_) => IO(println("Successfully ran the converter service")).as(ExitCode.Success)
         }
   }
 }
