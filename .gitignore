@@ -1,6 +1,6 @@
 target/
 
-# vim
+.vscode/
 .bsp/
 .idea/
 .metals/
