@@ -18,11 +18,12 @@ class ConverterService(
             .filter(f => f.getName.endsWith("mp4"))
             .map(f => {
               val input = f.getCanonicalPath
-              val output = input.replace(".mp4", ".mp3")
+              val output = input
+                .replace(config.videoDirectory.toString(), config.audioDirectory.toString())
+                .replace(".mp4", ".mp3")
               FFMPEGCommand.videoToAudio(input, output)
             })
-              .traverse(executeFFMPEGCommand)
+            .traverse(executeFFMPEGCommand)
       }
-
   }
 }
