@@ -13,7 +13,7 @@ class ConfigSpec extends Specification {
           immutable.Map("VIDEO_DIRECTORY" -> "/path/to/nibbāna", "AUDIO_DIRECTORY" -> "/magga")
         )
         Config.getProductionConfig(env) must beRight(
-          Config(new File("/path/to/nibbāna"), new File("/magga"))
+          Config(ConverterConfig(new File("/path/to/nibbāna"), new File("/magga")))
         )
       }
 

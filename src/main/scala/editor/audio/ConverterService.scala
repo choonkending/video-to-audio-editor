@@ -10,7 +10,8 @@ class ConverterService(
   executeFFMPEGCommand: FFMPEGCommand => IO[Either[Throwable, LazyList[String]]]
 ) {
   def convert(): IO[List[Either[Throwable, LazyList[String]]]] = {
-    IO(config.videoDirectory.listFiles)
+    val converterConfig = config.converterConfig
+    IO(converterConfig.videoDirectory.listFiles)
       .flatMap {
         files =>
           files
@@ -19,7 +20,7 @@ class ConverterService(
             .map(f => {
               val input = f.getCanonicalPath
               val output = input
-                .replace(config.videoDirectory.toString(), config.audioDirectory.toString())
+                .replace(converterConfig.videoDirectory.toString(), converterConfig.audioDirectory.toString())
                 .replace(".mp4", ".mp3")
               FFMPEGCommand.videoToAudio(input, output)
             })
