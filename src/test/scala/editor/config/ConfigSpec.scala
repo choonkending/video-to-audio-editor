@@ -10,10 +10,19 @@ class ConfigSpec extends Specification {
     "getProductionConfig" >> {
       "should return config when required environment variables are present" >> {
         val env = Environment(
-          immutable.Map("VIDEO_DIRECTORY" -> "/path/to/nibbāna", "AUDIO_DIRECTORY" -> "/magga")
+          immutable.Map(
+            "VIDEO_DIRECTORY" -> "/path/to/nibbāna",
+            "AUDIO_DIRECTORY" -> "/magga",
+            "PREPEND_TEMPLATE_FILE" -> "/bsv.mp3",
+            "PREPEND_INPUT_DIRECTORY" -> "/prepend_input",
+            "PREPEND_OUTPUT_DIRECTORY" -> "/prepend_output"
+          )
         )
         Config.getProductionConfig(env) must beRight(
-          Config(ConverterConfig(new File("/path/to/nibbāna"), new File("/magga")))
+          Config(
+            ConverterConfig(new File("/path/to/nibbāna"), new File("/magga")),
+            PrependerConfig(new File("/bsv.mp3"), new File("/prepend_input"), new File("/prepend_output"))
+           )
         )
       }
 
