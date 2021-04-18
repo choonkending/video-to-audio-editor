@@ -15,20 +15,45 @@ object Main extends IOApp {
         IO(System.err.println(s"Failed to start editor: ${e.errorMessage}")).as(ExitCode.Error)
       case Right(config) =>
         println("\nWonderful, we have our required environment variables available 🎉\n")
-        val converterService = new ConverterService(config, FFMPEG.run)
-        converterService
-          .convert()
-          .attempt
-          .flatMap {
-            case Left(error) =>
-              IO(
-                System.err.println("🥺 Something went wrong \n Please double check if you have created the data/mp4 and data/mp3 directories 🙏")
-              )
-                .flatMap(
-                  _ => IO(error.printStackTrace())
-                ).as(ExitCode.Error)
-            case Right(_) => IO(println("Successfully ran the converter service")).as(ExitCode.Success)
-        }
+
+        runPrependerService(config)
   }
+
+  private def runConverterService(config: Config): IO[ExitCode] = {
+    val converterService = new ConverterService(config, FFMPEG.run)
+    converterService
+      .convert()
+      .attempt
+      .flatMap {
+        case Left(error) =>
+          IO(
+            System.err.println("🥺 Something went wrong \n Please double check if you have created the data/mp4 and data/mp3 directories 🙏")
+          )
+            .flatMap(
+              _ => IO(error.printStackTrace())
+            ).as(ExitCode.Error)
+        case Right(_) => IO(println("Successfully ran the converter service")).as(ExitCode.Success)
+    }
+  }
+
+  private def runPrependerService(config: Config): IO[ExitCode] = {
+    val prependerService = new PrependerService(config, FFMPEG.run)
+
+    prependerService
+      .prepend()
+      .attempt
+      .flatMap {
+        case Left(error) =>
+          IO(
+            System.err.println("🥺 Something went wrong \n Please double check if you have have " +
+              "data/prepend_input, data/prepend_output, data/prepend_templates directories 🙏")
+          )
+            .flatMap(
+              _ => IO(error.printStackTrace())
+            ).as(ExitCode.Error)
+        case Right(_) => IO(println("Successfully ran the prepender service")).as(ExitCode.Success)
+    }
+  }
+
 }
 
