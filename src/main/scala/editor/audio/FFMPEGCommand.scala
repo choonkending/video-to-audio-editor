@@ -19,6 +19,17 @@ object FFMPEGCommand {
     )
   }
 
+  def prepend(templateFileName: String, inputFileName: String, outputFileName: String): FFMPEGCommand = {
+    val input = NonEmptyVector.of("-i", templateFileName, "-i", inputFileName)
+    val concatenateFileOptions = List("-filter_complex", "concat=n=2:v=0:a=1")
+
+    FFMPEGCommand(
+      input,
+      outputFileName,
+      concatenateFileOptions
+    )
+  }
+
   def toScalaProcessCommand(command: FFMPEGCommand): Seq[String] = {
     Seq("ffmpeg") ++ command.input.toVector ++ command.options ++ Seq(command.output)
   }
