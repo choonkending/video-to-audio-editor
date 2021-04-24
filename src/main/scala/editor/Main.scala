@@ -6,17 +6,18 @@ import editor.audio._
 
 object Main extends IOApp {
   def run(args: List[String]): IO[ExitCode] = {
-    println("\n🙏 🙏 🙏 Welcome to the Audio Visual Team 🙏 🙏 🙏\n")
-
     val env = Environment(sys.env)
+    val productionConfig = Config.getProductionConfig(env)
 
-    Config.getProductionConfig(env) match
+    productionConfig match
       case Left(e) =>
         IO(System.err.println(s"Failed to start editor: ${e.errorMessage}")).as(ExitCode.Error)
       case Right(config) =>
-        println("\nWonderful, we have our required environment variables available 🎉\n")
-
-        runPrependerService(config)
+        for {
+          _ <- IO(println("\n🙏 🙏 🙏 Welcome to the Audio Visual Team 🙏 🙏 🙏\n"))
+          _ <- IO(println("\nWonderful, we have our required environment variables available 🎉\n"))
+          exitCode <- runPrependerService(config)
+        } yield exitCode
   }
 
   private def runConverterService(config: Config): IO[ExitCode] = {
