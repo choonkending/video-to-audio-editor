@@ -16,7 +16,7 @@ object Main extends IOApp {
         for {
           _ <- IO(println("\n🙏 🙏 🙏 Welcome to the Audio Visual Team 🙏 🙏 🙏\n"))
           _ <- IO(println("\nWonderful, we have our required environment variables available 🎉\n"))
-          exitCode <- runPrependerService(config)
+          exitCode <- runConverterService(config)
         } yield exitCode
   }
 
