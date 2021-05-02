@@ -3,14 +3,15 @@ package editor.file
 import java.io._
 import cats.effect.IO
 
-class FileReader(listFiles: File => IO[Array[File]]) {
-  def listFilesInDirectory(file: File, extension: FileExtension): IO[Vector[File]] = {
-    listFiles(file)
+class FileReader(listFiles: () => IO[Array[File]]) {
+  def listFilesInDirectory(extension: FileExtension): IO[List[File]] = {
+    listFiles()
       .map(
         files =>
-          files.filter(_.isFile)
+          files
+          .toList
+          .filter(_.isFile)
           .filter(file => file.getName().contains(extension.name))
-          .toVector
       )
   }
 }
