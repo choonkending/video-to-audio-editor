@@ -3,6 +3,8 @@ package editor
 import cats.effect._
 import editor.config.{Config, Environment}
 import editor.audio._
+import editor.commands._
+import scala.io.StdIn.readLine
 
 object Main extends IOApp {
   def run(args: List[String]): IO[ExitCode] = {
@@ -16,8 +18,29 @@ object Main extends IOApp {
         for {
           _ <- IO(println("\n🙏 🙏 🙏 Welcome to the Audio Visual Team 🙏 🙏 🙏\n"))
           _ <- IO(println("\nWonderful, we have our required environment variables available 🎉\n"))
-          exitCode <- runConverterService(config)
+          exitCode <- startEditorApp(config)
         } yield exitCode
+  }
+
+  private def startEditorApp(config: Config): IO[ExitCode] = {
+    for {
+      _ <- IO(println("\n Hi there, please select an option from the following:\n"))
+      _ <- IO(println("1. Converter Service: convert MP4 to MP3\n"))
+      _ <- IO(println("2. Prepender Service: Stitch a selected audio clip add the beginning of an MP3 file\n"))
+      _ <- IO(println("Q. Quit application\n"))
+      _ <- IO(println("Enter an option 1, 2 or Q and hit the Enter Key 🙏\n"))
+      line <- IO(readLine())
+      outcome <- CommandParser.fromString(line).map(matchService(config)) match
+        case Right(ioOutcome) => ioOutcome
+        case Left(parsingError) => IO(System.err.println("Failed to parse command")).as(ExitCode.Error)
+    } yield outcome
+  }
+
+  private def matchService(config: Config)(command: Command): IO[ExitCode] = {
+    command match
+      case ConvertMP4ToMP3 => runConverterService(config)
+      case PrependMP3WithIntroduction => runPrependerService(config)
+      case Quit => IO(ExitCode.Success)
   }
 
   private def runConverterService(config: Config): IO[ExitCode] = {
