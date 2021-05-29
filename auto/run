@@ -4,5 +4,5 @@ set -euxo pipefail
 
 docker-compose --file ./docker/docker-compose.yml build production_editor
 docker-compose --file ./docker/docker-compose.yml down
-docker-compose --file ./docker/docker-compose.yml up production_editor
+docker-compose --file ./docker/docker-compose.yml run production_editor
 
