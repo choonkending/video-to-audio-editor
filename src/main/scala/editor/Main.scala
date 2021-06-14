@@ -1,6 +1,7 @@
 package editor
 
 import cats.effect._
+import editor.Editor
 import editor.config.{Config, Environment}
 import editor.audio._
 import editor.commands._
@@ -15,12 +16,19 @@ object Main extends IOApp {
       case Left(e) =>
         IO(System.err.println(s"Failed to start editor: ${e.errorMessage}")).as(ExitCode.Error)
       case Right(config) =>
-        for {
-          _ <- IO(println("\n🙏 🙏 🙏 Welcome to the Audio Visual Team 🙏 🙏 🙏\n"))
-          _ <- IO(println("\nWonderful, we have our required environment variables available 🎉\n"))
-          exitCode <- startEditorApp(config)
-        } yield exitCode
+        val start = Editor.init(config)
+        executeEditor(Editor.next(start))
+          .as(ExitCode.Success)
   }
+
+  def executeEditor(ioEditor: IO[Editor]): IO[Editor] =
+    ioEditor.flatMap {
+      editor =>
+        editor match
+          case Done => IO(Done)
+          case other => executeEditor(Editor.next(other))
+    }
+
 
   private def startEditorApp(config: Config): IO[ExitCode] = {
     for {
