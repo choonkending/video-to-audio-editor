@@ -30,7 +30,7 @@ object Main extends IOApp {
       _ <- IO(println("Q. Quit application\n"))
       _ <- IO(println("Enter an option 1, 2 or Q and hit the Enter Key 🙏\n"))
       line <- IO(readLine())
-      outcome <- CommandParser.fromString(line).map(matchService(config)) match
+      outcome <- CommandParser.parse(line).map(matchService(config)) match
         case Right(ioOutcome) => ioOutcome
         case Left(parsingError) => IO(System.err.println("Failed to parse command")).as(ExitCode.Error)
     } yield outcome

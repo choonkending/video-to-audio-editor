@@ -9,7 +9,7 @@ val commandMappings = Map(
 )
 
 object CommandParser {
-    def fromString(input: String): Either[ParsingError, Command] =
+    def parse(input: String): Either[ParsingError, Command] =
         Either.fromOption(
             commandMappings.get(input),
             InvalidCommand
