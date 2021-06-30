@@ -7,14 +7,14 @@ import editor._
 
 case class Config(converterConfig: ConverterConfig, prependerConfig: PrependerConfig)
 case class ConverterConfig(videoDirectory: File, audioDirectory: File)
-case class PrependerConfig(templateFile: File, inputDirectory: File, outputDirectory: File)
+case class PrependerConfig(templateDirectory: File, inputDirectory: File, outputDirectory: File)
 
 object Config {
   def getProductionConfig(env: Environment): Either[AppError, Config] = {
     val videoDirectory = env.required("VIDEO_DIRECTORY").map(new File(_)).toValidatedNec
     val audioDirectory = env.required("AUDIO_DIRECTORY").map(new File(_)).toValidatedNec
 
-    val prependTemplateFile = env.required("PREPEND_TEMPLATE_FILE").map(new File(_)).toValidatedNec
+    val prependTemplateFile = env.required("PREPEND_TEMPLATE_DIRECTORY").map(new File(_)).toValidatedNec
     val prependInputDirectory = env.required("PREPEND_INPUT_DIRECTORY").map(new File(_)).toValidatedNec
     val prependOutputDirectory = env.required("PREPEND_OUTPUT_DIRECTORY").map(new File(_)).toValidatedNec
 

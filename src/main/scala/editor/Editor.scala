@@ -101,7 +101,7 @@ case class MatchAndExecuteCommand(config: Config, command: Command) extends Edit
 
   private def prepend: IO[Editor] = {
     val prependerConfig = config.prependerConfig
-    val templateDirectory = prependerConfig.templateFile
+    val templateDirectory = prependerConfig.templateDirectory
     IO(prependerConfig.inputDirectory.listFiles)
       .map(filterWithSuffix("mp3"))
       .map(_.map(

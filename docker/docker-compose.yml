@@ -7,7 +7,7 @@ services:
     environment:
       VIDEO_DIRECTORY: data/mp4
       AUDIO_DIRECTORY: data/mp3
-      PREPEND_TEMPLATE_FILE: data/prepend_templates
+      PREPEND_TEMPLATE_DIRECTORY: data/prepend_templates
       PREPEND_INPUT_DIRECTORY: data/prepend_input
       PREPEND_OUTPUT_DIRECTORY: data/prepend_output
     volumes:

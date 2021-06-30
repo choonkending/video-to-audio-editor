@@ -13,7 +13,7 @@ class ConfigSpec extends Specification {
           immutable.Map(
             "VIDEO_DIRECTORY" -> "/path/to/nibbāna",
             "AUDIO_DIRECTORY" -> "/magga",
-            "PREPEND_TEMPLATE_FILE" -> "/bsv.mp3",
+            "PREPEND_TEMPLATE_DIRECTORY" -> "/template_directory",
             "PREPEND_INPUT_DIRECTORY" -> "/prepend_input",
             "PREPEND_OUTPUT_DIRECTORY" -> "/prepend_output"
           )
@@ -21,7 +21,7 @@ class ConfigSpec extends Specification {
         Config.getProductionConfig(env) must beRight(
           Config(
             ConverterConfig(new File("/path/to/nibbāna"), new File("/magga")),
-            PrependerConfig(new File("/bsv.mp3"), new File("/prepend_input"), new File("/prepend_output"))
+            PrependerConfig(new File("/template_directory"), new File("/prepend_input"), new File("/prepend_output"))
            )
         )
       }
