@@ -22,3 +22,6 @@ services:
     stdin_open: true
     tty: true
     command: /bin/bash
+    volumes:
+      - ${HOME}/dev/video-to-audio-editor:/home/build/app
+
