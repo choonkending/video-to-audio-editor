@@ -2,10 +2,11 @@ package editor
 
 import scala.io.StdIn._
 import java.io.File
-import cats.effect._
 import cats.implicits._
+import cats.effect._
+
 import editor.audio._
-import editor.config.{Config}
+import editor.config.{Config, ConverterConfig, PrependerConfig}
 import editor.commands._
 
 sealed trait Editor
@@ -51,11 +52,11 @@ case class MainMenu(config: Config) extends Editor:
 end MainMenu
 
 case class MatchAndExecuteCommand(config: Config, command: Command) extends Editor:
-  private def filterWithSuffix(suffix: String)(files: Array[File]): List[File] =
-    files.toList.filter(_.getName.endsWith(suffix))
+  private def filterWithSuffix(suffix: String)(files: List[File]): List[File] =
+    files.filter(_.getName.endsWith(suffix))
 
   private def selectFileFromDirectory(directory: File): IO[File] = {
-    val ioFiles = IO(directory.listFiles)
+    val ioFiles = IO(directory.listFiles.toList)
       .map(filterWithSuffix("mp3"))
 
     val ioFilesWithIndex = ioFiles.map(_.toVector.zipWithIndex)
@@ -68,72 +69,79 @@ case class MatchAndExecuteCommand(config: Config, command: Command) extends Edit
       files <- ioFiles
       _ <- ioFileOptions
       selectedOption <- IO(readInt())
-    } yield files(selectedOption)
+    } yield files(selectedOption) // try using files.lift(selectedOption)
+  }
+
+  private def handleResult(result: Either[Throwable, List[Either[Throwable, LazyList[String]]]]): IO[Editor] = {
+    result match {
+      case Left(error) =>
+        IO(
+          System.err.println("🥺 Something went wrong \n Please double check if you have specified the correct directories 🙏")
+        )
+        .flatMap(_ => IO(error.printStackTrace()))
+        .as(Done)
+      case Right(_) => IO(println("\nSuccessfully ran your service.\n")).as(Done)
+    }
+  }
+
+  private def executeCommands(ffmpegCommands: IO[List[FFMPEGCommand]]): IO[Editor] = {
+    ffmpegCommands
+      .flatMap(_.traverse(FFMPEG.run))
+      .attempt
+      .flatMap(handleResult)
   }
 
   private def convertMP4: IO[Editor] = {
-    val converterConfig = config.converterConfig
-    IO(converterConfig.videoDirectory.listFiles)
-      .map(filterWithSuffix("mp4"))
-      .map(_.map(
-            file => {
-              val input = file.getCanonicalPath
-              val output = input
-                .replace(converterConfig.videoDirectory.toString(), converterConfig.audioDirectory.toString())
-                .replace(".mp4", ".mp3")
-              FFMPEGCommand.videoToAudio(input, output)
-            })
+    val ConverterConfig(videoDirectory, audioDirectory) = config.converterConfig
+
+    def createFFMPEGCommand(file: File): IO[FFMPEGCommand] = {
+      val inputFile = IO(file.getCanonicalPath)
+      val outputFile = inputFile.map(
+        _.replace(
+          videoDirectory.toString(),
+          audioDirectory.toString()
+        ).replace(".mp4", ".mp3")
       )
-      .flatMap(_.traverse(FFMPEG.run))
-      .attempt
-      .flatMap {
-        case Left(error) =>
-          IO(
-            System.err.println("🥺 Something went wrong \n Please double check if you have specified the correct directory 🙏")
-          )
-          .flatMap(
-            _ => IO(error.printStackTrace())
-          )
-          .as(Done)
-        case Right(_) => IO(println("Successfully ran the converter service")).as(Done)
-      }
+      for {
+        input <- inputFile
+        output <- outputFile
+        command = FFMPEGCommand.videoToAudio(input, output)
+      } yield command
+    }
+
+    val mp4Files = IO(videoDirectory.listFiles.toList)
+      .map(filterWithSuffix("mp4"))
+
+    val ffmpegCommands: IO[List[FFMPEGCommand]] = mp4Files
+      .flatMap(_.traverse(createFFMPEGCommand))
+
+    executeCommands(ffmpegCommands)
   }
 
   private def prepend: IO[Editor] = {
-    val prependerConfig = config.prependerConfig
-    val templateDirectory = prependerConfig.templateFile
-    IO(prependerConfig.inputDirectory.listFiles)
+    val PrependerConfig(templateDirectory, inputDirectory, outputDirectory) = config.prependerConfig
+
+    def createFFMPEGCommand(file: File): IO[FFMPEGCommand] = {
+      for {
+        selectedFile <- selectFileFromDirectory(templateDirectory)
+        templateFileName <- IO(selectedFile.getCanonicalPath)
+        inputFile <- IO(file.getCanonicalPath)
+        outputFile = inputFile.replace(inputDirectory.toString(), outputDirectory.toString())
+        command = FFMPEGCommand.prepend(
+          templateFileName,
+          inputFile,
+          outputFile
+        )
+      } yield command
+    }
+
+    val mp3Files = IO(inputDirectory.listFiles.toList)
       .map(filterWithSuffix("mp3"))
-      .map(_.map(
-        file => {
-          selectFileFromDirectory(templateDirectory)
-            .flatMap(selectedTemplateFile => {
-              val input = file.getCanonicalPath
-              val output = input
-                .replace(prependerConfig.inputDirectory.toString(), prependerConfig.outputDirectory.toString())
-              IO(
-                FFMPEGCommand.prepend(
-                  templateFileName = selectedTemplateFile.getCanonicalPath,
-                  inputFileName = input,
-                  outputFileName = output
-                )
-              )
-          })
-        })
-      )
-      .flatMap(_.sequence.flatMap(_.traverse(FFMPEG.run)))
-      .attempt
-      .flatMap {
-        case Left(error) =>
-          IO(
-            System.err.println("🥺 Something went wrong \n Please double check if you have specified the correct template directory 🙏")
-          )
-            .flatMap(
-              _ => IO(error.printStackTrace())
-            )
-            .as(Done)
-        case Right(_) => IO(println("Successfully ran the prepender service")).as(Done)
-      }
+
+    val ffmpegCommands: IO[List[FFMPEGCommand]] = mp3Files
+      .flatMap(_.traverse(createFFMPEGCommand))
+
+    executeCommands(ffmpegCommands)
   }
 
   def next: IO[Editor] =
