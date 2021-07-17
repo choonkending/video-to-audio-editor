@@ -123,6 +123,7 @@ case class MatchAndExecuteCommand(config: Config, command: Command) extends Edit
 
     def createFFMPEGCommand(file: File): IO[FFMPEGCommand] = {
       for {
+        _ <- IO(println(s"Select an audio file to prepend for: ${file.getName}"))
         selectedFile <- selectFileFromDirectory(templateDirectory)
         templateFileName <- IO(selectedFile.getCanonicalPath)
         inputFile <- IO(file.getCanonicalPath)
