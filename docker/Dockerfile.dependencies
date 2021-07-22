@@ -17,6 +17,6 @@ WORKDIR /home/build/app
 
 # COPY --chown=<user>:<group> <hostPath> <containerPath>
 COPY --chown=build:build build.sbt ./
-COPY --chown=build:build project/build.properties project/
+COPY --chown=build:build project/build.properties project/plugins.sbt project/
 
 RUN sbt compile
