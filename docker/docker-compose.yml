@@ -4,6 +4,8 @@ services:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
+    env_file:
+      - ./environment-variables.env
     environment:
       VIDEO_DIRECTORY: data/mp4
       AUDIO_DIRECTORY: data/mp3
@@ -25,3 +27,10 @@ services:
     volumes:
       - ${HOME}/dev/video-to-audio-editor:/home/build/app
 
+  build:
+    <<: *base
+    stdin_open: true
+    tty: true
+    command: sbt clean assembly
+    volumes:
+      - ${HOME}/dev/video-to-audio-editor:/home/build/app
