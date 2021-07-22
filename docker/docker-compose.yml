@@ -4,6 +4,8 @@ services:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
+    env_file:
+      - ./environment-variables.env
     environment:
       VIDEO_DIRECTORY: data/mp4
       AUDIO_DIRECTORY: data/mp3
