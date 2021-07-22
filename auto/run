@@ -2,7 +2,7 @@
 
 set -euxo pipefail
 
-docker-compose --file ./docker/docker-compose.yml build production_editor
-docker-compose --file ./docker/docker-compose.yml down
-docker-compose --file ./docker/docker-compose.yml run production_editor
+# Load environment variables
+export $(cat ./docker/environment-variables.env | xargs)
 
+java -cp target/scala-3.0.0/video-and-audio-editor-assembly-0.1.0.jar editor.Main
