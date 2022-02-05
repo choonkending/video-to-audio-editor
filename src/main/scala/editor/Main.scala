@@ -1,28 +1,31 @@
 package editor
 
-import cats.effect._
+import cats.effect.ExitCode
+import monix.execution.Scheduler.Implicits.global
+import monix.execution.CancelableFuture
+import monix.eval.{Task, TaskApp}
 import editor.Editor
 import editor.config.{Config, Environment}
 
-object Main extends IOApp {
-  def run(args: List[String]): IO[ExitCode] = {
+object Main extends TaskApp {
+  def run(args: List[String]): Task[ExitCode] = {
     val env = Environment(sys.env)
     val productionConfig = Config.getProductionConfig(env)
 
     productionConfig match
       case Left(e) =>
-        IO(System.err.println(s"Failed to start editor: ${e.errorMessage}")).as(ExitCode.Error)
+        Task(System.err.println(s"Failed to start editor: ${e.errorMessage}")).as(ExitCode.Error)
       case Right(config) =>
         val start = Editor.init(config)
         executeEditor(Editor.next(start))
           .as(ExitCode.Success)
   }
 
-  def executeEditor(ioEditor: IO[Editor]): IO[Editor] =
-    ioEditor.flatMap {
+  def executeEditor(taskEditor: Task[Editor]): Task[Editor] =
+    taskEditor.flatMap {
       editor =>
         editor match
-          case Done => IO(Done)
+          case Done => Task(Done)
           case other => executeEditor(Editor.next(other))
     }
 

@@ -5,4 +5,4 @@ set -euxo pipefail
 # Load environment variables
 export $(cat ./docker/environment-variables.env | xargs)
 
-java -cp target/scala-3.0.0/video-and-audio-editor-assembly-0.1.0.jar editor.Main
+./target/universal/stage/bin/video-and-audio-editor

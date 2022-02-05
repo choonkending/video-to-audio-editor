@@ -1,11 +1,11 @@
 package editor.audio
 
-import cats.effect.IO
+import monix.eval.Task
 import scala.sys.process._
 
 object FFMPEG {
-  def run(command: FFMPEGCommand): IO[Either[Throwable, LazyList[String]]] = {
-    IO(
+  def run(command: FFMPEGCommand): Task[Either[Throwable, LazyList[String]]] = {
+    Task(
       Process(FFMPEGCommand.toScalaProcessCommand(command)).lazyLines
     ).attempt
   }

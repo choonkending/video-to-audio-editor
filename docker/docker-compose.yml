@@ -31,6 +31,6 @@ services:
     <<: *base
     stdin_open: true
     tty: true
-    command: sbt clean assembly
+    command: sbt clean stage
     volumes:
       - ${HOME}/dev/video-to-audio-editor:/home/build/app

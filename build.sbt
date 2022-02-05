@@ -1,5 +1,5 @@
-val scala2Version = "2.13.5"
-val scala3Version = "3.0.0"
+val scala2Version = "2.13.6"
+val scala3Version = "3.1.0"
 
 lazy val root = project
   .in(file("."))
@@ -11,13 +11,11 @@ lazy val root = project
 
     libraryDependencies ++= Seq(
       ("org.specs2" %% "specs2-core" % "4.12.0" % Test).cross(CrossVersion.for3Use2_13),
-      "org.typelevel" %% "cats-effect-testing-specs2" % "1.1.1" % Test,
-      "org.typelevel" %% "cats-core" % "2.6.1",
-      "org.typelevel" %% "cats-effect" % "3.1.1"
+      "io.monix" %% "monix" % "3.4.0"
     ),
 
     // To cross compile with Scala 3 and Scala 2
     crossScalaVersions := Seq(scala3Version, scala2Version)
   )
 
-
+enablePlugins(JavaAppPackaging)
