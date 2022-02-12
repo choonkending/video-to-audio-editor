@@ -5,10 +5,10 @@ import scala.sys.process._
 import scala.util.Try
 
 object FFMPEG {
-  def run(command: FFMPEGCommand): Task[Either[Throwable, LazyList[String]]] = {
+  def run(command: FFMPEGCommand): Task[Either[Throwable, String]] = {
     Task(
       Try(
-        Process(FFMPEGCommand.toScalaProcessCommand(command)).lazyLines
+        Process(FFMPEGCommand.toScalaProcessCommand(command)).!!
       ).toEither
     )
   }
