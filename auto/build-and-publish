@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+./auto/build-dependencies
+
+docker build \
+  --tag "kending/video-to-audio-editor:build-latest" \
+  --file Dockerfile \
+  --target build \
+  .
+
+docker build \
+  --tag "kending/video-to-audio-editor:latest" \
+  --file Dockerfile \
+  --target publish \
+  .
+
+docker push kending/video-to-audio-editor:latest

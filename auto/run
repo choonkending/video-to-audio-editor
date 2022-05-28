@@ -2,7 +2,6 @@
 
 set -euxo pipefail
 
-# Load environment variables
-export $(cat ./docker/environment-variables.env | xargs)
-
-./target/universal/stage/bin/video-and-audio-editor
+docker-compose --file ./docker-compose.yml build run
+docker-compose --file ./docker-compose.yml down
+docker-compose --file ./docker-compose.yml run run

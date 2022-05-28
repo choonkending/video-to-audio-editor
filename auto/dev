@@ -2,6 +2,6 @@
 
 set -euxo pipefail
 
-docker-compose --file ./docker/docker-compose.yml build dev
-docker-compose --file ./docker/docker-compose.yml down
-docker-compose --file ./docker/docker-compose.yml run --rm dev
+docker-compose --file ./docker-compose.yml build dev
+docker-compose --file ./docker-compose.yml down
+docker-compose --file ./docker-compose.yml run --rm dev

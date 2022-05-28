@@ -3,6 +3,7 @@
 set -euxo pipefail
 
 docker build \
-  --tag "dependencies" \
-  --file docker/Dockerfile.dependencies \
+  --tag "kending/video-to-audio-editor:dependencies-latest" \
+  --file Dockerfile \
+  --target dependencies \
   .
