@@ -71,7 +71,7 @@ case class MatchAndExecuteCommand(config: Config, command: Command) extends Edit
     } yield files(selectedOption) // try using files.lift(selectedOption)
   }
 
-  private def handleResult(result: Either[Throwable, List[Either[Throwable, LazyList[String]]]]): Task[Editor] = {
+  private def handleResult(result: Either[Throwable, List[Either[Throwable, String]]]): Task[Editor] = {
     result match {
       case Left(error) =>
         Task(
