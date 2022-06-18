@@ -1,11 +1,13 @@
 version: "3.8"
+
+volumes:
+  excluded_target:
+
 services:
   production_editor: &base
     build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
-    env_file:
-      - ./environment-variables.env
+      target: build
+      context: .
     environment:
       VIDEO_DIRECTORY: data/mp4
       AUDIO_DIRECTORY: data/mp3
@@ -13,7 +15,8 @@ services:
       PREPEND_INPUT_DIRECTORY: data/prepend_input
       PREPEND_OUTPUT_DIRECTORY: data/prepend_output
     volumes:
-      - ${HOME}/dev/video-to-audio-editor/data:/home/build/app/data
+      - ./:/home/build/app
+      - excluded_target:/home/build/app/target
 
   unit_tests:
     <<: *base
@@ -24,13 +27,9 @@ services:
     stdin_open: true
     tty: true
     command: /bin/bash
-    volumes:
-      - ${HOME}/dev/video-to-audio-editor:/home/build/app
 
-  build:
+  run:
     <<: *base
     stdin_open: true
     tty: true
-    command: sbt clean stage
-    volumes:
-      - ${HOME}/dev/video-to-audio-editor:/home/build/app
+    command: ./target/universal/stage/bin/video-and-audio-editor
