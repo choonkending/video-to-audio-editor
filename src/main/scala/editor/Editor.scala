@@ -79,7 +79,7 @@ case class MatchAndExecuteCommand(config: Config, command: Command) extends Edit
         )
         .flatMap(_ => Task(error.printStackTrace()))
         .as(Done)
-      case Right(_) => Task(println("\nSuccessfully ran your service.\n")).as(Done)
+      case Right(_) => Task(println("\nSuccessfully ran your service.\n")).as(MainMenu(config))
     }
   }
 
